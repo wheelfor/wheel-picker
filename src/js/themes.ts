@@ -1,5 +1,5 @@
 export const themes = {
-  Set2: [
+  "Fresh Air": [
     'rgb(102,194,165)',
     'rgb(252,141,98)',
     'rgb(141,160,203)',
@@ -9,7 +9,7 @@ export const themes = {
     'rgb(229,196,148)',
     'rgb(179,179,179)',
   ],
-  Accent: [
+  "Popcorn": [
     'rgb(127,201,127)',
     'rgb(190,174,212)',
     'rgb(253,192,134)',
@@ -19,7 +19,7 @@ export const themes = {
     'rgb(191,91,23)',
     'rgb(102,102,102)',
   ],
-  Set1: [
+  "Playground": [
     'rgb(228,26,28)',
     'rgb(55,126,184)',
     'rgb(77,175,74)',
@@ -30,7 +30,7 @@ export const themes = {
     'rgb(247,129,191)',
     'rgb(153,153,153)',
   ],
-  Set3: [
+  "Sprinkles": [
     'rgb(141,211,199)',
     'rgb(255,255,179)',
     'rgb(190,186,218)',
@@ -44,7 +44,7 @@ export const themes = {
     'rgb(204,235,197)',
     'rgb(255,237,111)',
   ],
-  Dark2: [
+  "Chalkboard": [
     'rgb(27,158,119)',
     'rgb(217,95,2)',
     'rgb(117,112,179)',
@@ -54,7 +54,7 @@ export const themes = {
     'rgb(166,118,29)',
     'rgb(102,102,102)',
   ],
-  Paired: [
+  "Buddy System": [
     'rgb(166,206,227)',
     'rgb(31,120,180)',
     'rgb(178,223,138)',
@@ -68,7 +68,7 @@ export const themes = {
     'rgb(255,255,153)',
     'rgb(177,89,40)',
   ],
-  Pastel2: [
+  "Garden Party": [
     'rgb(179,226,205)',
     'rgb(253,205,172)',
     'rgb(203,213,232)',
@@ -78,7 +78,7 @@ export const themes = {
     'rgb(241,226,204)',
     'rgb(204,204,204)',
   ],
-  Pastel1: [
+  "Marshmallow": [
     'rgb(251,180,174)',
     'rgb(179,205,227)',
     'rgb(204,235,197)',

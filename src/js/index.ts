@@ -27,7 +27,10 @@ export const WheelPickerOptionsSchema = z.object({
   pointerHeight: z.number().default(5),
   
   // Spin behavior
-  randomFn: z.function().returns(z.number()).optional(),
+  // randomFn: z.function({
+  //   input: [],
+  //   output: z.number(),
+  // }),
   spinDuration: z.number().default(4000),
   spinJitter: z.number().default(0.02),
   
@@ -80,7 +83,8 @@ export class WheelPicker extends EventTarget {
     this.center = canvas.width / 2;
     this.radius = this.center - 10;
 
-    this.randomFn = this.options.randomFn ?? WheelPicker.defaultRandom;
+    // fix random this.options.randomFn ??
+    this.randomFn =  WheelPicker.defaultRandom;
 
     this.pointerPath = this.createPointer();
 
@@ -218,7 +222,8 @@ export class WheelPicker extends EventTarget {
 
       ctx.save();
       ctx.translate(center, center);
-      ctx.rotate(angle + arc / 2);
+      const textAngle = segments.length == 1 ? 0 : angle + arc / 2;
+      ctx.rotate(textAngle);
       ctx.fillStyle = this.options.textColor;
       ctx.font = this.font(fontSize);
       ctx.textAlign = 'center';
