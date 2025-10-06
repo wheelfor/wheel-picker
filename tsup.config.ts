@@ -7,4 +7,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   minify: false,
+  banner: {
+    js: '// @ts-nocheck',
+  },
 });
