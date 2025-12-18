@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "build:dev": "tsup --config tsup.dev.config.ts --outDir dist"
   },
   "devDependencies": {
     "colord": "^2.9.3",

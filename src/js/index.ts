@@ -33,7 +33,10 @@ export const WheelPickerOptionsSchema = z.object({
   // }),
   spinDuration: z.number().default(4000),
   spinJitter: z.number().default(0.02),
-  
+
+  // Interaction
+  interactive: z.boolean().default(true),
+
   // Result display
   showResult: z.boolean().default(true),
   resultBorderWidth: z.number().default(3),
@@ -51,7 +54,7 @@ export const WheelPickerOptionsSchema = z.object({
 
 export type WheelPickerOptions = z.infer<typeof WheelPickerOptionsSchema>;
 
-export type SpinEndEvent = CustomEvent<string>;
+export type SpinEndEvent = CustomEvent<{ result: string; index: number; angle: number }>;
 
 export class WheelPicker extends EventTarget {
   private options: WheelPickerOptions;
@@ -93,13 +96,17 @@ export class WheelPicker extends EventTarget {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleClick = this.handleClick.bind(this);
 
-    this.canvas.addEventListener('mousemove', this.handleMouseMove);
-    this.canvas.addEventListener('click', this.handleClick);
+    if (this.options.interactive) {
+      this.canvas.addEventListener('mousemove', this.handleMouseMove);
+      this.canvas.addEventListener('click', this.handleClick);
+    }
   }
 
   public destroy() {
-    this.canvas.removeEventListener('mousemove', this.handleMouseMove);
-    this.canvas.removeEventListener('click', this.handleClick);
+    if (this.options.interactive) {
+      this.canvas.removeEventListener('mousemove', this.handleMouseMove);
+      this.canvas.removeEventListener('click', this.handleClick);
+    }
   }
 
   private handleMouseMove(e: MouseEvent) {
@@ -147,8 +154,8 @@ export class WheelPicker extends EventTarget {
     this.drawWheel();
   }
 
-  private fireSpinEnd(result: string): void {
-    const event: SpinEndEvent = new CustomEvent('spinend', { detail: result });
+  private fireSpinEnd(result: string, index: number, angle: number): void {
+    const event: SpinEndEvent = new CustomEvent('spinend', { detail: { result, index, angle } });
     this.dispatchEvent(event);
   }
 
@@ -287,7 +294,7 @@ export class WheelPicker extends EventTarget {
     }
   }
 
-  public spin() {
+  public spin(targetIndex?: number, targetAngle?: number) {
     if (this.isSpinning || this.segments.length === 0) {
       return;
     }
@@ -296,10 +303,39 @@ export class WheelPicker extends EventTarget {
     this.isFinished = false;
 
     const arc = (2 * Math.PI) / this.segments.length;
-    this.winningIndex = Math.floor(this.randomFn() * this.segments.length);
-    const sliceCenter =
-    this.winningIndex * arc + arc / 2 + (this.randomFn() - 0.5) * arc * 0.5;
-    const targetAngle = -Math.PI / 2 - sliceCenter + Math.PI * 2 * 5;
+    let finalTargetAngle: number;
+
+    if (targetAngle !== undefined) {
+      // Direct angle mode - spin to exact angle (for shared results)
+      // Add multiple rotations for realistic spinning effect, just like index-based spins
+      finalTargetAngle = targetAngle + Math.PI * 2 * 5; // Add 5 full rotations
+
+      // Calculate which segment wins based on final wheel position
+      // When wheel rotation is targetAngle, pointer at -Math.PI/2 points to:
+      // The segment at angle (targetAngle + Math.PI/2) relative to wheel
+      const pointerTargetAngle = targetAngle + Math.PI / 2;
+      const normalizedTarget = ((pointerTargetAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      const segmentIndex = Math.floor(normalizedTarget / arc) % this.segments.length;
+
+      // For deterministic spins, indices were reversed, so reverse here too
+      this.winningIndex = (this.segments.length - 1 - segmentIndex + this.segments.length) % this.segments.length;
+
+    } else {
+      // Index-based mode (normal spins)
+      this.winningIndex = targetIndex !== undefined && targetIndex >= 0 && targetIndex < this.segments.length
+        ? targetIndex
+        : Math.floor(this.randomFn() * this.segments.length);
+
+      // For shared/deterministic spins, use exact center; for random spins, add jitter
+      const isDeterministic = targetIndex !== undefined && targetIndex >= 0 && targetIndex < this.segments.length;
+      // Try reversing the index to account for drawing order
+      const adjustedIndex = isDeterministic ? (this.segments.length - 1 - this.winningIndex) : this.winningIndex;
+
+      const sliceCenter = isDeterministic
+        ? adjustedIndex * arc + arc / 2  // Exact center for deterministic spins
+        : this.winningIndex * arc + arc / 2 + (this.randomFn() - 0.5) * arc * 0.5; // Add jitter for random spins
+      finalTargetAngle = -Math.PI / 2 - sliceCenter + Math.PI * 2 * 5;
+    }
     const duration = this.options.spinDuration;
     const start = performance.now();
     const jitter = this.options.spinJitter;
@@ -307,7 +343,7 @@ export class WheelPicker extends EventTarget {
     const animate = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      const angle = eased * targetAngle + Math.sin(eased * 30) * jitter;
+      const angle = eased * finalTargetAngle + Math.sin(eased * 30) * jitter;
       this.rotation = angle;
       this.drawWheel();
       if (progress < 1) {
@@ -316,7 +352,7 @@ export class WheelPicker extends EventTarget {
       else {
         this.isSpinning = false;
         this.isFinished = true;
-        this.fireSpinEnd(this.segments[this.winningIndex]);
+        this.fireSpinEnd(this.segments[this.winningIndex], this.winningIndex, this.rotation);
         this.drawWheel();
       }
     };
