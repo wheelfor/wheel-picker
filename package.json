@@ -1,9 +1,45 @@
 {
-  "name": "wheel-picker",
+  "name": "@wheelfor/wheel-picker",
   "version": "1.0.0",
+  "description": "Canvas-based spinning wheel picker with themes, smooth animations, and spin events. Zero runtime dependencies.",
+  "keywords": [
+    "wheel",
+    "spinner",
+    "random picker",
+    "wheel of fortune",
+    "canvas",
+    "animation",
+    "random",
+    "decision",
+    "game",
+    "wheel spinner"
+  ],
+  "license": "MIT",
+  "author": "wheelfor.com",
+  "homepage": "https://wheelfor.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wheelfor/wheel-picker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wheelfor/wheel-picker/issues"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "build:dev": "tsup --config tsup.dev.config.ts --outDir dist"
