@@ -42,10 +42,12 @@
   },
   "scripts": {
     "build": "tsup",
-    "build:dev": "tsup --config tsup.dev.config.ts --outDir dist"
+    "build:dev": "tsup --config tsup.dev.config.ts --outDir dist",
+    "publish:jsr": "jsr publish --allow-slow-types"
   },
   "devDependencies": {
     "colord": "^2.9.3",
+    "jsr": "^0.14.3",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "zod": "^4.0.10"

@@ -1,0 +1,11 @@
+{
+  "name": "@wheelfor/wheel-picker",
+  "version": "1.0.0",
+  "license": "MIT",
+  "exports": "./src/js/index.ts",
+  "imports": {
+    "zod": "npm:zod@^4.0.10",
+    "colord": "npm:colord@^2.9.3",
+    "colord/plugins/mix": "npm:colord@^2.9.3/plugins/mix"
+  }
+}
